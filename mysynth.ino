@@ -1,11 +1,15 @@
 const int LEDS_PIN[] = {6, 7};
 const int SWITCH_PIN = 3;
 const int POT_PIN = A0;
+const int BUZZER_PIN = 9;
 
 int led_active = 0;
 int switch_value = 0;
 int old_switch_value = 0;
 int pot_value = 0;
+
+int frequency = 2500;
+int duration = 100;
 
 void setup() {
   int led_init;
@@ -25,6 +29,15 @@ void setup() {
   
 }
 
+
+int my_map_buzzer(int value) {
+    /* My custom `map` implementation */
+    // Serial.print("value*4900 = ");
+    // Serial.println(value*4900);
+    // Serial.print("value*4900/1023 = ");
+    // Serial.println(value*4900/1023);
+    return (value*4900/1023) + 100;
+}
 
 void loop() {
   // put your main code here, to run repeatedly:
@@ -46,20 +59,19 @@ void loop() {
       old_switch_value = switch_value;
   }
 
-  if (pot_value < 512) {
-    digitalWrite(LEDS_PIN[1], LOW);
-    Serial.print("pot_value = ");
-    Serial.println(pot_value);
-    Serial.println("led_active = 0");
-    digitalWrite(LEDS_PIN[0], HIGH);
-  } else {
-    Serial.print("pot_value = ");
-    Serial.println(pot_value);
-    digitalWrite(LEDS_PIN[0], LOW);
-    Serial.print("led_active = 1");
-    digitalWrite(LEDS_PIN[1], HIGH);
-  }
+  Serial.print("pot_value = ");
+  Serial.println(pot_value);
 
-  delay(100);
+  if (led_active == 0) {
+    frequency = map(pot_value,0,1023,100,5000);
+    Serial.println(frequency);
+    frequency = my_map_buzzer(pot_value);
+    Serial.println(frequency);
+
+  } else {
+    duration = map(pot_value,0, 1023, 50, 100);
+  }
+  tone(BUZZER_PIN, frequency, duration);
+  delay(50);
 
 }
