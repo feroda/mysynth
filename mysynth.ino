@@ -3,11 +3,14 @@ const int SWITCH_PIN = 3;
 const int POT_PIN = A0;
 const int BUZZER_PIN = 9;
 
-const int LOOP_DELAY = 500;
+const int LOOP_DELAY = 200;
 
-int led_active = 0;
+const int SWITCH_COUNT_CONFIRM_STATE_CHANGE = 10;
+int switch_partial_count = 0;
 int switch_value = 0;
 int old_switch_value = 0;
+
+int led_active = 0;
 int pot_value = 0;
 
 int frequency = 2500;
@@ -31,22 +34,44 @@ void setup() {
   
 }
 
+int debounce(int switch_instant_value) {
+
+    int switch_real_value = old_switch_value;
+
+    if (switch_instant_value != old_switch_value) {
+        switch_partial_count = 0;
+    }
+
+    if (!switch_partial_count) {
+        switch_partial_count++;
+        if (switch_partial_count > SWITCH_COUNT_CONFIRM_STATE_CHANGE) {
+            switch_real_value = switch_real_value;
+        }
+    }
+    
+    return switch_real_value;
+  
+}
+
 
 int my_map_buzzer(int value) {
     /* My custom `map` implementation */
-    // Serial.print("value*4900 = ");
-    // Serial.println(value*4900);
-    // Serial.print("value*4900/1023 = ");
-    // Serial.println(value*4900/1023);
+    //Serial.print("value*4900 = ");
+    //Serial.println(value*4900);
+    //Serial.print("value*4900/1023 = ");
+    //Serial.println(value*4900/1023);
     return (value*4900/1023) + 100;
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-  switch_value = digitalRead(SWITCH_PIN);
+  
   pot_value = analogRead(POT_PIN);
   
-  Serial.print("button = ");
+  switch_value = digitalRead(SWITCH_PIN);
+  Serial.print("switch = ");
+  Serial.println(switch_value);
+  switch_value = debounce(switch_value);
+  Serial.print("switch real = ");
   Serial.println(switch_value);
 
   if (switch_value != old_switch_value) {
@@ -73,7 +98,7 @@ void loop() {
   } else {
     duration = map(pot_value,0, 1023, 50, LOOP_DELAY);
   }
-  tone(BUZZER_PIN, frequency, duration);
+  //tone(BUZZER_PIN, frequency, duration);
   delay(LOOP_DELAY);
 
 }
