@@ -78,6 +78,18 @@ int my_map_buzzer(int value) {
     return (value*4900/1023) + 100;
 }
 
+// DEBUG
+void loop1() {
+  
+  switch_value = digitalRead(SWITCH_PIN);
+  
+  Serial.print("switch = ");
+  Serial.println(switch_value);
+  //switch_value = debounce(switch_value);
+  //Serial.print("switch real = ");
+  //Serial.println(switch_value);
+}
+
 void loop() {
   
   pot_value = analogRead(POT_PIN);
