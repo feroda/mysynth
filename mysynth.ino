@@ -3,6 +3,8 @@ const int SWITCH_PIN = 3;
 const int POT_PIN = A0;
 const int BUZZER_PIN = 9;
 
+const int LOOP_DELAY = 500;
+
 int led_active = 0;
 int switch_value = 0;
 int old_switch_value = 0;
@@ -69,9 +71,9 @@ void loop() {
     Serial.println(frequency);
 
   } else {
-    duration = map(pot_value,0, 1023, 50, 100);
+    duration = map(pot_value,0, 1023, 50, LOOP_DELAY);
   }
   tone(BUZZER_PIN, frequency, duration);
-  delay(50);
+  delay(LOOP_DELAY);
 
 }
