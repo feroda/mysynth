@@ -118,7 +118,9 @@ void loop() {
     duration = map(pot_value,0, 1023, 50, MAX_SOUND_DURATION);
   }
 
-  tone(BUZZER_PIN, frequency, duration);
-  delay(100);
+  if (millis() > tone_start + MAX_SOUND_DURATION) { 
+    tone_start = millis();
+    tone(BUZZER_PIN, frequency, duration);
+  }
 
 }
